@@ -36,7 +36,7 @@ public static class SaveSystem
 [System.Serializable]
 public class PlayerData
 {
-    public float Money;
+    public int Money;
     public int Experience;
     public int Level;
 }

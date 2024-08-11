@@ -4,8 +4,11 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-    [SerializeField] private LevelExperienceDataScriptableObject _levelExperienceData;
+    
+    [SerializeField] private PlayerController _playerController;
 
+    private LevelExperienceDataScriptableObject _levelExperienceData;
+    
     private void Awake()
     {
         if (Instance == null)
@@ -21,22 +24,22 @@ public class GameManager : MonoBehaviour
     {
         try
         {
-            _levelExperienceData = Resources.Load<LevelExperienceDataScriptableObject>("LevelExperienceData");
+            _levelExperienceData = Resources.Load<LevelExperienceDataScriptableObject>("LevelExperienceDataScriptableObject");
 
             if (_levelExperienceData == null)
             {
-                throw new System.Exception("LevelExperienceData not found in Resources!");
+                throw new System.Exception("LevelExperienceDataScriptableObject not found in Resources!");
             }
             
-            Debug.Log("LevelExperienceData successfully loaded.");
+            Debug.Log("LevelExperienceDataScriptableObject successfully loaded.");
         }
         catch (System.Exception ex)
         {
-            Debug.LogError("An error occurred while loading LevelExperienceData: " + ex.Message);
+            Debug.LogError("An error occurred while loading LevelExperienceDataScriptableObject: " + ex.Message);
         }
     }
 
-    public int GetExperienceRequired(int level) => _levelExperienceData.GetExperienceRequiredByLevel(level);
+    public int GetCurrentExperienceRequired() => _levelExperienceData.GetExperienceRequiredByLevel(_playerController.GetCurrentLevel());
 
     public int GetMaxPlayerLevel() => _levelExperienceData.GetMaxPlayerLevel();
 }

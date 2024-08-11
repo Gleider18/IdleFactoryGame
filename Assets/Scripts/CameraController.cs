@@ -3,10 +3,8 @@ using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour
 {
-    public float panSpeed = 20f; // Скорость перемещения камеры
     public Vector2 panLimitX; // Ограничения по оси X
     public Vector2 panLimitY;  // Ограничения по оси Y
-    public Vector2 panLimitZ;  // Ограничения по оси Y
 
     private Vector3 touchStart;
 
