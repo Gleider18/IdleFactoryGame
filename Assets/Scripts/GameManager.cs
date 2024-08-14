@@ -42,4 +42,10 @@ public class GameManager : MonoBehaviour
     public int GetCurrentExperienceRequired() => _levelExperienceData.GetExperienceRequiredByLevel(_playerController.GetCurrentLevel());
 
     public int GetMaxPlayerLevel() => _levelExperienceData.GetMaxPlayerLevel();
+
+    public int GetCurrentMoney() => _playerController.GetCurrentMoney();
+
+    public void AddMoney(int i) => _playerController.AddMoney(i);
+
+    public bool SpendMoney(int i) => _playerController.SpendMoney(i);
 }

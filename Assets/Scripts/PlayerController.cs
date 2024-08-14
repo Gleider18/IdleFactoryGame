@@ -70,5 +70,7 @@ public class PlayerController : MonoBehaviour
     private void SavePlayerData() => SaveSystem.SavePlayerData(_playerData);
 
     public int GetCurrentLevel() => _playerData.Level;
+
+    public int GetCurrentMoney() => _playerData.Money;
 }
 

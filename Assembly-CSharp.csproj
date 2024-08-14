@@ -45,9 +45,13 @@
     <Analyzer Include="G:\Programs\Unity\2022.3.21f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ScriptableObjects\PartsDatabaseScriptableObject.cs" />
     <Compile Include="Assets\Scripts\ScriptableObjects\LevelExperienceDataScriptableObject.cs" />
+    <Compile Include="Assets\Scripts\GameTickController.cs" />
+    <Compile Include="Assets\Scripts\FactoryController.cs" />
     <Compile Include="Assets\Scripts\UI\PlayerUIController.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\Conveyor.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\SaveSystem.cs" />
