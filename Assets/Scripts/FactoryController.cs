@@ -17,9 +17,8 @@ public class FactoryController : MonoBehaviour
     public Button buildButton;
     public Button upgradeFactoryButton;
     public Button upgradeFactoryProductionLevelButton;
-    public GameObject factoryBuilding;
-    public GameObject buildCanvas;
-    public GameObject upgradeCanvas;
+    public List<GameObject> onReadyToBuildObjects;
+    public List<GameObject> onBuiltObjects;
     public Conveyor conveyor;
     public FactoryController nextFactory;
 
@@ -50,10 +49,9 @@ public class FactoryController : MonoBehaviour
     private void UpdateFactoryState()
     {
         var isBuilt = IsBuilt();
-        
-        buildCanvas.SetActive(!isBuilt);
-        upgradeCanvas.SetActive(isBuilt);
-        factoryBuilding.SetActive(isBuilt);
+
+        foreach (var gm in onReadyToBuildObjects) gm.SetActive(!isBuilt);
+        foreach (var gm in onBuiltObjects) gm.SetActive(isBuilt);
     }
 
     private void BuildFactory()
@@ -81,7 +79,6 @@ public class FactoryController : MonoBehaviour
     private void ProcessParts()
     {
         if (currentState != FactoryState.Built) return;
-        print("ON TICK");
 
         ProducePart();
 
