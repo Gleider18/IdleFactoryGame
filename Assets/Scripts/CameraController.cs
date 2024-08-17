@@ -45,9 +45,5 @@ public class CameraController : MonoBehaviour
 
     private bool IsPointerOverUIObject() => EventSystem.current.IsPointerOverGameObject();
 
-    private bool IsPointerOverGameObject()
-    {
-        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        return Physics.Raycast(ray);
-    }
+    private bool IsPointerOverGameObject() => Physics.Raycast(_mainCamera.ScreenPointToRay(Input.mousePosition));
 }
