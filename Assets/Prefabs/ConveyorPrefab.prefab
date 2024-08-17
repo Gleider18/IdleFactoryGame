@@ -160,6 +160,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56607dba3c44434686e4b687fede1bc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPoint: {fileID: 1685709916322832390}
-  endPoint: {fileID: 1082186246947861982}
-  timeElapsed: 0
+  _startMovePoint: {fileID: 1685709916322832390}
+  _endMovePoint: {fileID: 1082186246947861982}
+  _journeyTime: 0.99

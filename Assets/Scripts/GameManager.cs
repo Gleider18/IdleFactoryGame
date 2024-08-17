@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             LoadLevelExperienceData();
         }
         else Destroy(gameObject);
@@ -48,4 +48,6 @@ public class GameManager : MonoBehaviour
     public void AddMoney(int i) => _playerController.AddMoney(i);
 
     public bool SpendMoney(int i) => _playerController.SpendMoney(i);
+
+    public void AddExperience(int i) => _playerController.AddExperience(i);
 }

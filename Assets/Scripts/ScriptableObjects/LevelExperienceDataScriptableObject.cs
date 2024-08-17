@@ -12,7 +12,7 @@ namespace ScriptableObjects
         public int GetExperienceRequiredByLevel(int level)
         {
             if (level < _experienceRequiredByLevels.Count) return _experienceRequiredByLevels[level];
-            else throw new Exception($"There is no {level} level in database!");
+            else throw new Exception($"There is no {level} Level in database!");
         }
 
         public int GetMaxPlayerLevel() => _experienceRequiredByLevels.Count;

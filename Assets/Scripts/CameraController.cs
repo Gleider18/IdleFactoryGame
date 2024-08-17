@@ -3,10 +3,17 @@ using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour
 {
-    public Vector2 panLimitX; // Ограничения по оси X
-    public Vector2 panLimitY;  // Ограничения по оси Y
+    [SerializeField] private Vector2 _cameraLimitX;
+    [SerializeField] private Vector2 _cameraLimitY;
 
-    private Vector3 touchStart;
+    private Vector3 _touchStartPoint;
+    private Camera _mainCamera;
+
+    private void Start()
+    {
+        _mainCamera = Camera.main;
+        Application.targetFrameRate = 60;
+    }
 
     void Update()
     {
@@ -15,25 +22,21 @@ public class CameraController : MonoBehaviour
             return;
         }
         
-        if (Input.GetMouseButtonDown(0))
-        {
-            touchStart = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            print("down");
-        }
+        if (Input.GetMouseButtonDown(0)) _touchStartPoint = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
         if (Input.GetMouseButton(0))
         {
-            Vector3 direction = touchStart - Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            if (transform.position.z > panLimitY.x && transform.position.z < panLimitY.y)
+            Vector3 direction = _touchStartPoint - _mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            if (transform.position.z > _cameraLimitY.x && transform.position.z < _cameraLimitY.y)
             {
-                touchStart.z += direction.z;
+                _touchStartPoint.z += direction.z;
             }
             
             direction.z *= 2f;
             Vector3 newPosition = transform.position + direction;
             
-            newPosition.x = Mathf.Clamp(newPosition.x, panLimitX.x, panLimitX.y);
-            newPosition.z = Mathf.Clamp(newPosition.z, panLimitY.x, panLimitY.y);
+            newPosition.x = Mathf.Clamp(newPosition.x, _cameraLimitX.x, _cameraLimitX.y);
+            newPosition.z = Mathf.Clamp(newPosition.z, _cameraLimitY.x, _cameraLimitY.y);
             newPosition.y = 10;
 
             transform.position = newPosition;
@@ -47,7 +50,7 @@ public class CameraController : MonoBehaviour
 
     private bool IsPointerOverGameObject()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
         return Physics.Raycast(ray);
     }
 }

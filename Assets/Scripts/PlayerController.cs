@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
         OnCurrencyChanged?.Invoke(_playerData.Money);
         OnExperienceChanged?.Invoke(_playerData.Experience);
         OnPlayerLevelChanged?.Invoke(_playerData.Level);
+        GameTickController.Instance.OnTick += SavePlayerData;
     }
 
     public void AddMoney(int amount)
@@ -26,7 +27,6 @@ public class PlayerController : MonoBehaviour
         if (amount <= 0) return;
         
         _playerData.Money += amount;
-        SavePlayerData();
         OnCurrencyChanged?.Invoke(_playerData.Money);
     }
 
@@ -35,7 +35,6 @@ public class PlayerController : MonoBehaviour
         if (amount < 0 || _playerData.Money < amount) return false;
         
         _playerData.Money -= amount;
-        SavePlayerData();
         OnCurrencyChanged?.Invoke(_playerData.Money);
         return true;
     }
@@ -46,20 +45,18 @@ public class PlayerController : MonoBehaviour
         
         _playerData.Experience += amount;
         CheckLevelUp();
-        SavePlayerData();
         OnExperienceChanged?.Invoke(_playerData.Experience);
     }
 
     private void CheckLevelUp()
     {
-        if (GameManager.Instance.GetMaxPlayerLevel() >= _playerData.Level) return;
+        if (GameManager.Instance.GetMaxPlayerLevel() <= _playerData.Level) return;
         int requiredExperience = GameManager.Instance.GetCurrentExperienceRequired();
         if (_playerData.Experience >= requiredExperience)
         {
             _playerData.Level++;
             _playerData.Experience -= requiredExperience;
             OnLevelUp();
-            SavePlayerData();
         }
     }
 

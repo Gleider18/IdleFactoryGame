@@ -12,16 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb3e853d3875ef7449566591bc3b87e0, type: 3}
   m_Name: PartsDatabaseScriptableObject
   m_EditorClassIdentifier: 
-  parts:
-  - level: 0
-    name: asd
-    prefab: {fileID: 2632571045383951247, guid: 2645846b2c75a234e83ca8318fb0b206,
+  _parts:
+  - Level: 0
+    Price: 5
+    PartPrefab: {fileID: 2632571045383951247, guid: 2645846b2c75a234e83ca8318fb0b206,
       type: 3}
-  - level: 1
-    name: sd
-    prefab: {fileID: 2632571045383951247, guid: 37dbdd3dbefe36a45ac119a829c904b1,
+  - Level: 1
+    Price: 10
+    PartPrefab: {fileID: 2632571045383951247, guid: 37dbdd3dbefe36a45ac119a829c904b1,
       type: 3}
-  - level: 2
-    name: d
-    prefab: {fileID: 2632571045383951247, guid: ddd67c26384f98046826e70dd428f09e,
+  - Level: 2
+    Price: 20
+    PartPrefab: {fileID: 2632571045383951247, guid: ddd67c26384f98046826e70dd428f09e,
+      type: 3}
+  - Level: 3
+    Price: 35
+    PartPrefab: {fileID: 2632571045383951247, guid: 34ea3b0f022eaad43ba61c4314ec348c,
+      type: 3}
+  - Level: 4
+    Price: 50
+    PartPrefab: {fileID: 2632571045383951247, guid: 56e77b8f22725ee44aba49fed098549c,
       type: 3}

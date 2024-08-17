@@ -1,23 +1,20 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PartsDatabase", menuName = "ScriptableObjects/PartsDatabase")]
 public class PartsDatabaseScriptableObject : ScriptableObject
 {
-    public List<PartModel> parts; // Список всех возможных деталей
+    [SerializeField] private List<PartModel> _parts;
 
-    public PartModel GetPartByLevel(int level)
-    {
-        // Возвращаем первую найденную деталь с нужным уровнем
-        return parts.Find(part => part.level == level);
-    }
+    public PartModel GetPartByLevel(int level) => _parts.Find(part => part.Level == level);
+
+    public int GetMaxPartLevel() => _parts.Count - 1;
 }
 
 [System.Serializable]
 public class PartModel
 {
-    public int level;       // Уровень детали
-    public string name;     // Название детали
-    public GameObject prefab;  // Префаб детали
+    public int Level;
+    public int Price;
+    public GameObject PartPrefab;
 }

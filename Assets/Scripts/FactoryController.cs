@@ -1,47 +1,50 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class FactoryController : MonoBehaviour
 {
-    public enum FactoryState
-    {
-        ReadyToBuild,
-        Built
-    }
+    [Tooltip("Base Values")]
+    [SerializeField] private int _buildCost = 100;
+    [SerializeField] private int _factoryMergeLevel = 0;
+    [SerializeField] private int _factoryProductionLevel = 0;
+    
+    [Tooltip("UI")]
+    [SerializeField] private Button _buildButton;
+    [SerializeField] private Button _upgradeFactoryButton;
+    [SerializeField] private Button _upgradeFactoryProductionLevelButton;
+    [SerializeField] private TextMeshProUGUI _buildCostText;
+    
+    [Tooltip("References")]
+    [SerializeField] private PartsDatabaseScriptableObject _partsDatabase;
+    [SerializeField] private List<GameObject> _onReadyToBuildObjects;
+    [SerializeField] private List<GameObject> _onBuiltObjects;
+    [SerializeField] private List<ConveyorController> _conveyorControllers;
+    [SerializeField] private List<FactoryController> _nextFactories;
 
-    public FactoryState currentState = FactoryState.ReadyToBuild;
-    public int buildCost = 100;
-    public int factoryLevel = 0;
-    public int factoryProductionLevel = 0;
-    public Button buildButton;
-    public Button upgradeFactoryButton;
-    public Button upgradeFactoryProductionLevelButton;
-    public List<GameObject> onReadyToBuildObjects;
-    public List<GameObject> onBuiltObjects;
-    public Conveyor conveyor;
-    public FactoryController nextFactory;
-
-    public PartsDatabaseScriptableObject partsDatabase;
-
-    private List<Part> incomingParts = new(); // Список деталей, пришедших на завод
+    private FactoryState _currentState = FactoryState.ReadyToBuild;
+    private readonly List<Part> _holdingParts = new();
+    private int _currentConveyorIndex = 0;
 
     private void Start()
     {
-        buildButton.onClick.AddListener(BuildFactory);
-        upgradeFactoryButton.onClick.AddListener(UpgradeFactory);
-        upgradeFactoryProductionLevelButton.onClick.AddListener(UpgradeFactoryProductionLevel);
+        _buildButton.onClick.AddListener(BuildFactory);
+        _upgradeFactoryButton.onClick.AddListener(UpgradeFactory);
+        _upgradeFactoryProductionLevelButton.onClick.AddListener(UpgradeFactoryProductionLevel);
         
         GameTickController.Instance.OnTick += ProcessParts;
-        
+
+        for (int i = 0; i < _nextFactories.Count; i++) _conveyorControllers[i].SetNextFactory(_nextFactories[i]);
+
         UpdateFactoryState();
     }
 
     private void OnDestroy()
     {
-        buildButton.onClick.RemoveAllListeners();
-        upgradeFactoryButton.onClick.RemoveAllListeners();
-        upgradeFactoryProductionLevelButton.onClick.RemoveAllListeners();
+        _buildButton.onClick.RemoveAllListeners();
+        _upgradeFactoryButton.onClick.RemoveAllListeners();
+        _upgradeFactoryProductionLevelButton.onClick.RemoveAllListeners();
         
         GameTickController.Instance.OnTick -= ProcessParts;
     }
@@ -50,106 +53,120 @@ public class FactoryController : MonoBehaviour
     {
         var isBuilt = IsBuilt();
 
-        foreach (var gm in onReadyToBuildObjects) gm.SetActive(!isBuilt);
-        foreach (var gm in onBuiltObjects) gm.SetActive(isBuilt);
+        _buildCostText.text = _buildCost.ToString();
+        
+        foreach (var gm in _onReadyToBuildObjects) gm.SetActive(!isBuilt);
+        foreach (var gm in _onBuiltObjects) gm.SetActive(isBuilt);
     }
 
     private void BuildFactory()
     {
-        if (currentState == FactoryState.ReadyToBuild)
+        if (_currentState != FactoryState.ReadyToBuild) return;
+        if (GameManager.Instance.SpendMoney(_buildCost))
         {
-            if (GameManager.Instance.SpendMoney(buildCost))
-            {
-                buildButton.gameObject.SetActive(false);
-                currentState = FactoryState.Built;
-                UpdateFactoryState();
-            }
-            else
-            {
-                Debug.Log("Not enough currency to build the factory.");
-            }
+            _buildButton.gameObject.SetActive(false);
+            _currentState = FactoryState.Built;
+            UpdateFactoryState();
         }
+        else Debug.Log("Not enough currency to build the factory.");
     }
 
-    public void ReceivePart(Part part)
-    {
-        incomingParts.Add(part);
-    }
+    public void ReceivePart(Part part) => _holdingParts.Add(part);
 
     private void ProcessParts()
     {
-        if (currentState != FactoryState.Built) return;
+        if (_currentState != FactoryState.Built) return;
 
         ProducePart();
 
-        if (incomingParts.Count >= 2)
-        {
-            incomingParts.Sort((a, b) => a.tPartModel.level.CompareTo(b.tPartModel.level));
-
-            for (int i = 0; i < incomingParts.Count - 1; i++)
-            {
-                if (incomingParts[i].tPartModel.level == incomingParts[i + 1].tPartModel.level && incomingParts[i].tPartModel.level < factoryLevel)
-                {
-                    int newLevel = incomingParts[i].tPartModel.level + 1;
-
-                    PartModel newPartModel = partsDatabase.GetPartByLevel(newLevel);
-                    if (newPartModel != null)
-                    {
-                        // Уничтожаем старые детали
-                        Destroy(incomingParts[i].thisPart.gameObject);
-                        Destroy(incomingParts[i + 1].thisPart.gameObject);
-
-                        // Создаем новую деталь
-                        GameObject newPartObject = Instantiate(newPartModel.prefab, transform.position, Quaternion.identity);
-
-                        // Добавляем новую деталь в список
-                        incomingParts.Add(new Part()
-                        {
-                            thisPart = newPartObject,
-                            tPartModel = newPartModel
-                        });
-
-                        // Удаляем старые детали из списка
-                        incomingParts.RemoveAt(i + 1);
-                        incomingParts.RemoveAt(i);
-
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (incomingParts.Count > 0)
-        {
-            foreach (var part in incomingParts) conveyor.ReceivePart(part);
-            incomingParts.Clear();
-        }
+        if (_holdingParts.Count - _conveyorControllers.Count + 1 >= 2) MergePartsInFactory();
+        if (_holdingParts.Count > 0) SendPartsToConveyors();
     }
     
     private void ProducePart()
     {
-        PartModel newPartModel = partsDatabase.GetPartByLevel(factoryProductionLevel);
+        PartModel newPartModel = _partsDatabase.GetPartByLevel(_factoryProductionLevel);
         if (newPartModel != null)
         {
-            GameObject newPartObject = Instantiate(newPartModel.prefab, transform.position, Quaternion.identity);
-
-            incomingParts.Add(new Part()
+            for (int i = 0; i < _conveyorControllers.Count; i++)
             {
-                thisPart = newPartObject,
-                tPartModel = newPartModel
-            });
+                GameObject newPartObject = Instantiate(newPartModel.PartPrefab, transform.position, Quaternion.identity);
+
+                _holdingParts.Add(new Part()
+                {
+                    thisPart = newPartObject,
+                    tPartModel = newPartModel
+                });
+            }
         }
     }
 
-    public void UpgradeFactory() => factoryLevel++;
+    private void SendPartsToConveyors()
+    {
+        foreach (var part in _holdingParts)
+        {
+            _conveyorControllers[_currentConveyorIndex].ReceivePart(part);
+            _currentConveyorIndex = _currentConveyorIndex >= _conveyorControllers.Count - 1 ? 0 : _currentConveyorIndex + 1;
+        }
+        _holdingParts.Clear();
+    }
 
-    public void UpgradeFactoryProductionLevel() => factoryProductionLevel++;
+    private void MergePartsInFactory()
+    {
+        _holdingParts.Sort((a, b) => a.tPartModel.Level.CompareTo(b.tPartModel.Level));
 
-    public bool IsBuilt() => currentState == FactoryState.Built;
+        for (int i = 0; i < _holdingParts.Count - 1; i++)
+        {
+            if (_holdingParts[i].tPartModel.Level == _holdingParts[i + 1].tPartModel.Level && _holdingParts[i].tPartModel.Level < _factoryMergeLevel)
+            {
+                int newLevel = _holdingParts[i].tPartModel.Level + 1;
+
+                PartModel newPartModel = _partsDatabase.GetPartByLevel(newLevel);
+                if (newPartModel != null)
+                {
+                    Destroy(_holdingParts[i].thisPart.gameObject);
+                    Destroy(_holdingParts[i + 1].thisPart.gameObject);
+
+                    GameObject newPartObject = Instantiate(newPartModel.PartPrefab, transform.position, Quaternion.identity);
+
+                    _holdingParts.Add(new Part()
+                    {
+                        thisPart = newPartObject,
+                        tPartModel = newPartModel
+                    });
+
+                    _holdingParts.RemoveAt(i + 1);
+                    _holdingParts.RemoveAt(i);
+
+                    break;
+                }
+            }
+        }
+    }
+
+    private void UpgradeFactory()
+    {
+        _factoryMergeLevel++;
+        if (_factoryMergeLevel - 1 >= _partsDatabase.GetMaxPartLevel()) _upgradeFactoryButton.gameObject.SetActive(false);
+    }
+
+    private void UpgradeFactoryProductionLevel()
+    {
+        _factoryProductionLevel++;
+        if (_factoryProductionLevel >= _partsDatabase.GetMaxPartLevel()) _upgradeFactoryProductionLevelButton.gameObject.SetActive(false);
+    }
+
+    public bool IsBuilt() => _currentState == FactoryState.Built;
 }
 
 public class Part
 {
     public PartModel tPartModel;
     public GameObject thisPart;
+}
+
+public enum FactoryState
+{
+    ReadyToBuild,
+    Built
 }

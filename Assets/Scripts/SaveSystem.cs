@@ -25,7 +25,7 @@ public static class SaveSystem
         {
             return new PlayerData
             {
-                Money = 0,
+                Money = 20,
                 Experience = 0,
                 Level = 1
             };

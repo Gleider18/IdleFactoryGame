@@ -42,6 +42,7 @@ namespace UI
         private void UpdateLevelUI(int newLevel)
         {
             _levelText.text = newLevel.ToString();
+            SetMaxExperience(GameManager.Instance.GetCurrentExperienceRequired());
         }
 
         private void SetMaxExperience(int maxExperience)
