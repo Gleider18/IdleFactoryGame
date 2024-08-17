@@ -43,10 +43,7 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    private bool IsPointerOverUIObject()
-    {
-        return EventSystem.current.IsPointerOverGameObject();
-    }
+    private bool IsPointerOverUIObject() => EventSystem.current.IsPointerOverGameObject();
 
     private bool IsPointerOverGameObject()
     {
