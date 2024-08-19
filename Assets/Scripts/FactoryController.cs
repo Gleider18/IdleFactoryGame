@@ -22,6 +22,7 @@ public class FactoryController : MonoBehaviour
     [SerializeField] private List<GameObject> _onBuiltObjects;
     [SerializeField] private List<ConveyorController> _conveyorControllers;
     [SerializeField] private List<FactoryController> _nextFactories;
+    [SerializeField] private FactoryVisualsController _factoryVisualsController;
 
     private FactoryState _currentState = FactoryState.ReadyToBuild;
     private readonly List<Part> _holdingParts = new();
@@ -147,12 +148,14 @@ public class FactoryController : MonoBehaviour
     private void UpgradeFactory()
     {
         _factoryMergeLevel++;
-        if (_factoryMergeLevel - 1 >= _partsDatabase.GetMaxPartLevel()) _upgradeFactoryButton.gameObject.SetActive(false);
+        _factoryVisualsController.UpdateFactoryLevelVisual(_factoryMergeLevel);
+        if (_factoryMergeLevel >= _partsDatabase.GetMaxPartLevel()) _upgradeFactoryButton.gameObject.SetActive(false);
     }
 
     private void UpgradeFactoryProductionLevel()
     {
         _factoryProductionLevel++;
+        _factoryVisualsController.UpdateProductionLevelVisual(_factoryProductionLevel);
         if (_factoryProductionLevel >= _partsDatabase.GetMaxPartLevel()) _upgradeFactoryProductionLevelButton.gameObject.SetActive(false);
     }
 

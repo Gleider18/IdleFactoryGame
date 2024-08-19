@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,11 @@ public class PartsDatabaseScriptableObject : ScriptableObject
 {
     [SerializeField] private List<PartModel> _parts;
 
-    public PartModel GetPartByLevel(int level) => _parts.Find(part => part.Level == level);
+    public PartModel GetPartByLevel(int level)
+    {
+        if (level >= 0 && level < _parts.Count) return _parts[level];
+        else throw new Exception($"There is no {level} level in parts database!");
+    }
 
     public int GetMaxPartLevel() => _parts.Count - 1;
 }

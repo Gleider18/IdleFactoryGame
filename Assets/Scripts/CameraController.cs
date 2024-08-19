@@ -12,11 +12,13 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         _mainCamera = Camera.main;
-        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 61;
     }
 
     void Update()
     {
+        Application.targetFrameRate = 61;
         if (IsPointerOverUIObject())// || IsPointerOverGameObject())
         {
             return;
