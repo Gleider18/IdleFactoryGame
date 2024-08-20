@@ -1005,6 +1005,11 @@ PrefabInstance:
       propertyPath: _startFactoryProductionLevel
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _factoriesNeededAroundToBeAbleToBuild
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7787176427284308127, guid: 561330ae6e967804facc59f2ef7de96b,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -1031,6 +1036,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 398648503}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &398648505 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+    type: 3}
+  m_PrefabInstance: {fileID: 398648503}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fc8c38014a83234183464c5d7f0c124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -3070,6 +3087,26 @@ PrefabInstance:
       propertyPath: _startFactoryProductionLevel
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _nextFactoriesToActivateWhenBuilded.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _nextFactoriesToActivateWhenBuilded.Array.data[0]
+      value: 
+      objectReference: {fileID: 2023489949}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _nextFactoriesToActivateWhenBuilded.Array.data[1]
+      value: 
+      objectReference: {fileID: 3110766509145171964}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _nextFactoriesToActivateWhenBuilded.Array.data[2]
+      value: 
+      objectReference: {fileID: 2132282538}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4161,6 +4198,26 @@ PrefabInstance:
       propertyPath: _startFactoryProductionLevel
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _factoriesNeededAroundToBeAbleToBuild
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _nextFactoriesToActivateWhenBuilded.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _nextFactoriesToActivateWhenBuilded.Array.data[0]
+      value: 
+      objectReference: {fileID: 2132282538}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _nextFactoriesToActivateWhenBuilded.Array.data[1]
+      value: 
+      objectReference: {fileID: 398648505}
     - target: {fileID: 7787176427284308127, guid: 561330ae6e967804facc59f2ef7de96b,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -4512,6 +4569,11 @@ PrefabInstance:
       propertyPath: _startFactoryProductionLevel
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5247852541425774467, guid: f44ef01e23d884648a99e67c3b1da190,
+        type: 3}
+      propertyPath: _factoriesNeededAroundToBeAbleToBuild
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4523,6 +4585,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2132282536}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2132282538 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5247852541425774467, guid: f44ef01e23d884648a99e67c3b1da190,
+    type: 3}
+  m_PrefabInstance: {fileID: 2132282536}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fc8c38014a83234183464c5d7f0c124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2132480314
 GameObject:
   m_ObjectHideFlags: 0
@@ -4816,11 +4890,28 @@ PrefabInstance:
       propertyPath: _startFactoryProductionLevel
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+        type: 3}
+      propertyPath: _factoriesNeededAroundToBeAbleToBuild
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 561330ae6e967804facc59f2ef7de96b, type: 3}
+--- !u!114 &3110766509145171964 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5247852541425774467, guid: 561330ae6e967804facc59f2ef7de96b,
+    type: 3}
+  m_PrefabInstance: {fileID: 3110766509145171963}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fc8c38014a83234183464c5d7f0c124, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!23 &3473934489684422507
 MeshRenderer:
   m_ObjectHideFlags: 0

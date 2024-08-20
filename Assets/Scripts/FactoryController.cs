@@ -9,6 +9,7 @@ public class FactoryController : MonoBehaviour
     [SerializeField] private int _buildCost = 100;
     [SerializeField] private int _factoryMergeLevel = 0;
     [SerializeField] private int _factoryProductionLevel = 0;
+    [SerializeField] private int _factoriesNeededAroundToBeAbleToBuild = 0;
     
     [Tooltip("UI")]
     [SerializeField] private Button _buildButton;
@@ -22,6 +23,7 @@ public class FactoryController : MonoBehaviour
     [SerializeField] private List<GameObject> _onBuiltObjects;
     [SerializeField] private List<ConveyorController> _conveyorControllers;
     [SerializeField] private List<FactoryController> _nextFactories;
+    [SerializeField] private List<FactoryController> _nextFactoriesToActivateWhenBuilded;
     [SerializeField] private FactoryVisualsController _factoryVisualsController;
 
     private FactoryState _currentState = FactoryState.ReadyToBuild;
@@ -34,7 +36,7 @@ public class FactoryController : MonoBehaviour
         _upgradeFactoryButton.onClick.AddListener(UpgradeFactory);
         _upgradeFactoryProductionLevelButton.onClick.AddListener(UpgradeFactoryProductionLevel);
         
-        GameTickController.Instance.OnTick += ProcessParts;
+        GameTickController.Instance.OnTick += OnGameTick;
 
         for (int i = 0; i < _nextFactories.Count; i++) _conveyorControllers[i].SetNextFactory(_nextFactories[i]);
 
@@ -47,19 +49,16 @@ public class FactoryController : MonoBehaviour
         _upgradeFactoryButton.onClick.RemoveAllListeners();
         _upgradeFactoryProductionLevelButton.onClick.RemoveAllListeners();
         
-        GameTickController.Instance.OnTick -= ProcessParts;
+        GameTickController.Instance.OnTick -= OnGameTick;
     }
 
-    private void UpdateFactoryState()
+    private void PingActivateFactory()
     {
-        var isBuilt = IsBuilt();
+        if (_factoriesNeededAroundToBeAbleToBuild <= 0) return;
 
-        _buildCostText.text = _buildCost.ToString();
-        
-        foreach (var gm in _onReadyToBuildObjects) gm.SetActive(!isBuilt);
-        foreach (var gm in _onBuiltObjects) gm.SetActive(isBuilt);
+        _buildButton.gameObject.SetActive(--_factoriesNeededAroundToBeAbleToBuild <= 0);
     }
-
+    
     private void BuildFactory()
     {
         if (_currentState != FactoryState.ReadyToBuild) return;
@@ -68,13 +67,14 @@ public class FactoryController : MonoBehaviour
             _buildButton.gameObject.SetActive(false);
             _currentState = FactoryState.Built;
             UpdateFactoryState();
+            foreach (var factory in _nextFactoriesToActivateWhenBuilded) factory.PingActivateFactory();
         }
         else Debug.Log("Not enough currency to build the factory.");
     }
 
     public void ReceivePart(Part part) => _holdingParts.Add(part);
 
-    private void ProcessParts()
+    private void OnGameTick()
     {
         if (_currentState != FactoryState.Built) return;
 
@@ -143,6 +143,16 @@ public class FactoryController : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void UpdateFactoryState()
+    {
+        var isBuilt = IsBuilt();
+
+        _buildCostText.text = _buildCost.ToString();
+        _buildButton.gameObject.SetActive(_factoriesNeededAroundToBeAbleToBuild <= 0);
+        foreach (var gm in _onReadyToBuildObjects) gm.SetActive(!isBuilt);
+        foreach (var gm in _onBuiltObjects) gm.SetActive(isBuilt);
     }
 
     private void UpgradeFactory()
