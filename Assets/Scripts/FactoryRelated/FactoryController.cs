@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -29,6 +30,7 @@ public class FactoryController : MonoBehaviour
     private FactoryState _currentState = FactoryState.ReadyToBuild;
     private readonly List<Part> _holdingParts = new();
     private int _currentConveyorIndex = 0;
+    private Coroutine _currentSendPartsToConveyorsCoroutine;
 
     private void Start()
     {
@@ -81,7 +83,7 @@ public class FactoryController : MonoBehaviour
         ProducePart();
 
         if (_holdingParts.Count - _conveyorControllers.Count + 1 >= 2) MergePartsInFactory();
-        if (_holdingParts.Count > 0) SendPartsToConveyors();
+        if (_holdingParts.Count > 0 && _currentSendPartsToConveyorsCoroutine == null) _currentSendPartsToConveyorsCoroutine = StartCoroutine(SendPartsToConveyors());
     }
     
     private void ProducePart()
@@ -91,25 +93,22 @@ public class FactoryController : MonoBehaviour
         {
             for (int i = 0; i < _conveyorControllers.Count; i++)
             {
-                GameObject newPartObject = Instantiate(newPartModel.PartPrefab, transform.position, Quaternion.identity);
-
-                _holdingParts.Add(new Part()
-                {
-                    thisPart = newPartObject,
-                    tPartModel = newPartModel
-                });
+                _holdingParts.Add(PartPool.Instance.GetPart(newPartModel.Level));
             }
         }
     }
 
-    private void SendPartsToConveyors()
+    private IEnumerator SendPartsToConveyors()
     {
-        foreach (var part in _holdingParts)
+        List<Part> tempPartsArray = new List<Part>(_holdingParts);
+        _holdingParts.Clear();
+        foreach (var part in tempPartsArray)
         {
             _conveyorControllers[_currentConveyorIndex].ReceivePart(part);
+            if (_currentConveyorIndex == _conveyorControllers.Count - 1) yield return new WaitForSeconds(0.1f);
             _currentConveyorIndex = _currentConveyorIndex >= _conveyorControllers.Count - 1 ? 0 : _currentConveyorIndex + 1;
         }
-        _holdingParts.Clear();
+        _currentSendPartsToConveyorsCoroutine = _holdingParts.Count <= 0 ? null : StartCoroutine(SendPartsToConveyors());
     }
 
     private void MergePartsInFactory()
@@ -125,16 +124,10 @@ public class FactoryController : MonoBehaviour
                 PartModel newPartModel = _partsDatabase.GetPartByLevel(newLevel);
                 if (newPartModel != null)
                 {
-                    Destroy(_holdingParts[i].thisPart.gameObject);
-                    Destroy(_holdingParts[i + 1].thisPart.gameObject);
+                    PartPool.Instance.ReturnPart(_holdingParts[i]);
+                    PartPool.Instance.ReturnPart(_holdingParts[i + 1]);
 
-                    GameObject newPartObject = Instantiate(newPartModel.PartPrefab, transform.position, Quaternion.identity);
-
-                    _holdingParts.Add(new Part()
-                    {
-                        thisPart = newPartObject,
-                        tPartModel = newPartModel
-                    });
+                    _holdingParts.Add(PartPool.Instance.GetPart(newPartModel.Level));
 
                     _holdingParts.RemoveAt(i + 1);
                     _holdingParts.RemoveAt(i);
