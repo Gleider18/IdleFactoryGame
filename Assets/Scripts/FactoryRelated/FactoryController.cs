@@ -10,11 +10,13 @@ public class FactoryController : MonoBehaviour
     [SerializeField] private int _buildCost = 100;
     [SerializeField] private int _factoryMergeLevel = 0;
     [SerializeField] private int _factoryProductionLevel = 0;
+    [SerializeField] private int _factoryProductionAmount = 1;
     [SerializeField] private int _factoriesNeededAroundToBeAbleToBuild = 0;
     
     [Tooltip("UI")]
     [SerializeField] private Button _buildButton;
     [SerializeField] private Button _upgradeFactoryButton;
+    [SerializeField] private Button _upgradeProductionAmountButton;
     [SerializeField] private Button _upgradeFactoryProductionLevelButton;
     [SerializeField] private TextMeshProUGUI _buildCostText;
     
@@ -36,6 +38,7 @@ public class FactoryController : MonoBehaviour
     {
         _buildButton.onClick.AddListener(BuildFactory);
         _upgradeFactoryButton.onClick.AddListener(UpgradeFactory);
+        _upgradeProductionAmountButton.onClick.AddListener(UpgradeFactoryProductionAmount);
         _upgradeFactoryProductionLevelButton.onClick.AddListener(UpgradeFactoryProductionLevel);
         
         GameTickController.Instance.OnTick += OnGameTick;
@@ -49,6 +52,7 @@ public class FactoryController : MonoBehaviour
     {
         _buildButton.onClick.RemoveAllListeners();
         _upgradeFactoryButton.onClick.RemoveAllListeners();
+        _upgradeProductionAmountButton.onClick.RemoveAllListeners();
         _upgradeFactoryProductionLevelButton.onClick.RemoveAllListeners();
         
         GameTickController.Instance.OnTick -= OnGameTick;
@@ -91,7 +95,7 @@ public class FactoryController : MonoBehaviour
         PartModel newPartModel = _partsDatabase.GetPartByLevel(_factoryProductionLevel);
         if (newPartModel != null)
         {
-            for (int i = 0; i < _conveyorControllers.Count; i++)
+            for (int i = 0; i < _factoryProductionAmount; i++)//_conveyorControllers.Count - (_conveyorControllers.Count - _factoryProductionAmount); i++)
             {
                 _holdingParts.Add(PartPool.Instance.GetPart(newPartModel.Level));
             }
@@ -105,7 +109,7 @@ public class FactoryController : MonoBehaviour
         foreach (var part in tempPartsArray)
         {
             _conveyorControllers[_currentConveyorIndex].ReceivePart(part);
-            if (_currentConveyorIndex == _conveyorControllers.Count - 1) yield return new WaitForSeconds(0.1f);
+            if (_currentConveyorIndex == _conveyorControllers.Count - 1 || _factoryProductionAmount < _conveyorControllers.Count) yield return new WaitForSeconds(0.1f);
             _currentConveyorIndex = _currentConveyorIndex >= _conveyorControllers.Count - 1 ? 0 : _currentConveyorIndex + 1;
         }
         _currentSendPartsToConveyorsCoroutine = _holdingParts.Count <= 0 ? null : StartCoroutine(SendPartsToConveyors());
@@ -153,6 +157,11 @@ public class FactoryController : MonoBehaviour
         _factoryMergeLevel++;
         _factoryVisualsController.UpdateFactoryLevelVisual(_factoryMergeLevel);
         if (_factoryMergeLevel >= _partsDatabase.GetMaxPartLevel()) _upgradeFactoryButton.gameObject.SetActive(false);
+    }
+
+    private void UpgradeFactoryProductionAmount()
+    {
+        _factoryProductionAmount++;
     }
 
     private void UpgradeFactoryProductionLevel()

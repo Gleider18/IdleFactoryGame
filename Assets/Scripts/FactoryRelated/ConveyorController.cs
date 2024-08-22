@@ -6,7 +6,7 @@ public class ConveyorController : MonoBehaviour
 {
     [SerializeField] private Transform _startMovePoint;
     [SerializeField] private Transform _endMovePoint;
-    [SerializeField] private float _journeyTime = 1f;
+    [SerializeField] private float _journeyTime = 0.99f;
     
     private FactoryController _nextFactory;
 
