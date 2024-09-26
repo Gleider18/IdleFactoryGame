@@ -25,7 +25,6 @@ public class PartPool : MonoBehaviour
                 Part part = _availableParts[i];
                 _availableParts.RemoveAt(i);
                 _usedParts.Add(part);
-                part.thisPart.SetActive(true);
                 return part;
             }
         }
@@ -46,7 +45,7 @@ public class PartPool : MonoBehaviour
     {
         PartModel partModel = _partsDatabase.GetPartByLevel(level);
         GameObject partObject = Instantiate(partModel.PartPrefab);
-        
+        partObject.SetActive(false);
         return new Part { tPartModel = partModel, thisPart = partObject };
     }
 }

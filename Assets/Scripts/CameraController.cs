@@ -8,6 +8,7 @@ public class CameraController : MonoBehaviour
 
     private Vector3 _touchStartPoint;
     private Camera _mainCamera;
+    private bool _isMoveable = false;
 
     private void Start()
     {
@@ -19,13 +20,14 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (IsPointerOverUIObject())// || IsPointerOverGameObject())
+        if (Input.GetMouseButtonDown(0) && !IsPointerOverUIObject())
         {
-            return;
+            _isMoveable = true;
+            _touchStartPoint = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
         }
-        
-        if (Input.GetMouseButtonDown(0)) _touchStartPoint = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
+        if (!_isMoveable) return;
+        
         if (Input.GetMouseButton(0))
         {
             Vector3 direction = _touchStartPoint - _mainCamera.ScreenToWorldPoint(Input.mousePosition);
@@ -43,6 +45,8 @@ public class CameraController : MonoBehaviour
 
             transform.position = newPosition;
         }
+        
+        if(Input.GetMouseButtonUp(0)) _isMoveable = false;
     }
 
     private bool IsPointerOverUIObject() => EventSystem.current.IsPointerOverGameObject();

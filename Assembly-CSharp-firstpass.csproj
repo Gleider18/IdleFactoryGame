@@ -687,6 +687,9 @@
     <Reference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary">
       <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Recorder.Editor">
+      <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.Recorder.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.RenderPipelines.Core.Runtime">
       <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
     </Reference>
@@ -710,6 +713,9 @@
     </Reference>
     <Reference Include="Unity.ShaderGraph.Editor">
       <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.ShaderGraph.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Recorder.Base">
+      <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.Recorder.Base.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
       <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
@@ -768,14 +774,17 @@
     <Reference Include="Unity.TextMeshPro">
       <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Shaders">
+      <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Recorder">
+      <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.Recorder.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Searcher.Editor">
       <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.Searcher.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipelines.Universal.Shaders">
-      <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Shaders.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VisualScripting.State">
       <HintPath>G:\RiderProjects\IdleGame_TT\Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>

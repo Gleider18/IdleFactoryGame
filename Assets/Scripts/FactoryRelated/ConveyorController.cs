@@ -14,6 +14,7 @@ public class ConveyorController : MonoBehaviour
     {
         var partGM = part.thisPart;
         partGM.transform.position = _startMovePoint.position;
+        partGM.SetActive(true);
         partGM.transform.DOMove(_endMovePoint.position, _journeyTime).SetEase(Ease.Linear).OnComplete(() => OnPartReachedEnd(part));
     }
 
