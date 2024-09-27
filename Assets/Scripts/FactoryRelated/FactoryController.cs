@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class FactoryController : MonoBehaviour
 {
+    [SerializeField] private int _uniqueFactoryID;
+    
     [Tooltip("Base Values")]
     [SerializeField] private int _buildCost = 100;
     [SerializeField] private int _factoryMergeLevel = 0;
@@ -33,6 +35,8 @@ public class FactoryController : MonoBehaviour
     private readonly List<Part> _holdingParts = new();
     private int _currentConveyorIndex = 0;
     private Coroutine _currentSendPartsToConveyorsCoroutine;
+    
+    public int UniqueFactoryID => _uniqueFactoryID;
 
     private void Start()
     {
@@ -58,11 +62,39 @@ public class FactoryController : MonoBehaviour
         GameTickController.Instance.OnTick -= OnGameTick;
     }
 
+    public FactoryData GetFactoryData()
+    {
+        return new FactoryData
+        {
+            factoryID = _uniqueFactoryID,
+            factoryState = _currentState,
+            mergeLevel = _factoryMergeLevel,
+            productionLevel = _factoryProductionLevel,
+            productionAmount = _factoryProductionAmount
+        };
+    }
+
+    public void LoadFactoryData(FactoryData data)
+    {
+        _currentState = data.factoryState;
+        _factoryMergeLevel = data.mergeLevel;
+        _factoryProductionLevel = data.productionLevel;
+        _factoryProductionAmount = data.productionAmount;
+
+        // Обновление состояния фабрики на основе загруженных данных
+        UpdateFactoryState();
+    }
+    
     private void PingActivateFactory()
     {
         if (_factoriesNeededAroundToBeAbleToBuild <= 0) return;
 
         _buildButton.gameObject.SetActive(--_factoriesNeededAroundToBeAbleToBuild <= 0);
+    }
+
+    public void PingNextFactories()
+    {
+        foreach (var factory in _nextFactoriesToActivateWhenBuilded) factory.PingActivateFactory();
     }
     
     private void BuildFactory()
@@ -73,7 +105,7 @@ public class FactoryController : MonoBehaviour
             _buildButton.gameObject.SetActive(false);
             _currentState = FactoryState.Built;
             UpdateFactoryState();
-            foreach (var factory in _nextFactoriesToActivateWhenBuilded) factory.PingActivateFactory();
+            PingNextFactories();
         }
         else Debug.Log("Not enough currency to build the factory.");
     }
