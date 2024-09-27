@@ -5,20 +5,22 @@ public class PlayerController : MonoBehaviour
 {
     public static event Action<int> OnCurrencyChanged;
     public static event Action<int> OnExperienceChanged;
-    public static event Action<int> OnPlayerLevelChanged;
+    public static event Action<int, bool> OnPlayerLevelChanged;
     
     private PlayerData _playerData { get; set; }
+    private bool _isMaxLevel = false;
 
     private void Awake()
     {
         LoadPlayerData();
+        _isMaxLevel = GameManager.Instance.GetMaxPlayerLevel() <= _playerData.Level;
     }
 
     private void Start()
     {
         OnCurrencyChanged?.Invoke(_playerData.Money);
         OnExperienceChanged?.Invoke(_playerData.Experience);
-        OnPlayerLevelChanged?.Invoke(_playerData.Level);
+        OnLevelUp();
         GameTickController.Instance.OnTick += SavePlayerData;
     }
 
@@ -41,26 +43,27 @@ public class PlayerController : MonoBehaviour
 
     public void AddExperience(int amount)
     {
-        if (amount <= 0) return;
+        if (amount <= 0 || _isMaxLevel) return;
         
         _playerData.Experience += amount;
-        CheckLevelUp();
         OnExperienceChanged?.Invoke(_playerData.Experience);
+        CheckLevelUp();
     }
 
     private void CheckLevelUp()
     {
-        if (GameManager.Instance.GetMaxPlayerLevel() <= _playerData.Level) return;
         int requiredExperience = GameManager.Instance.GetCurrentExperienceRequired();
         if (_playerData.Experience >= requiredExperience)
         {
             _playerData.Level++;
+            _isMaxLevel = GameManager.Instance.GetMaxPlayerLevel() <= _playerData.Level;
+            if (_isMaxLevel) OnExperienceChanged?.Invoke(-1);
             _playerData.Experience -= requiredExperience;
             OnLevelUp();
         }
     }
 
-    private void OnLevelUp() => OnPlayerLevelChanged?.Invoke(_playerData.Level);
+    private void OnLevelUp() => OnPlayerLevelChanged?.Invoke(_playerData.Level, _isMaxLevel);
 
     private void LoadPlayerData() => _playerData = SaveSystem.LoadPlayerData();
 

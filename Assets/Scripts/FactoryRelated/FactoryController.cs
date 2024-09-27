@@ -182,6 +182,8 @@ public class FactoryController : MonoBehaviour
         _buildButton.gameObject.SetActive(_factoriesNeededAroundToBeAbleToBuild <= 0);
         foreach (var gm in _onReadyToBuildObjects) gm.SetActive(!isBuilt);
         foreach (var gm in _onBuiltObjects) gm.SetActive(isBuilt);
+        if (_factoryMergeLevel >= _partsDatabase.GetMaxPartLevel()) _upgradeFactoryButton.gameObject.SetActive(false);
+        if (_factoryProductionLevel >= _partsDatabase.GetMaxPartLevel()) _upgradeFactoryProductionLevelButton.gameObject.SetActive(false);
     }
 
     private void UpgradeFactory()

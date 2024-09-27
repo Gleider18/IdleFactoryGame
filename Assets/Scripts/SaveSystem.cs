@@ -16,6 +16,7 @@ public static class SaveSystem
     {
         string filePath = Path.Combine(Application.persistentDataPath, SaveFileName);
 
+        File.Delete(filePath);
         if (File.Exists(filePath))
         {
             string json = File.ReadAllText(filePath);
