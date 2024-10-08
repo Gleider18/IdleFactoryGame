@@ -23,14 +23,14 @@ public class ConveyorController : MonoBehaviour
         if (_nextFactory != null && _nextFactory.IsBuilt())
         {
             part.thisPart.transform.position = _nextFactory.transform.position;
-            _nextFactory.ReceivePart(part);
+            _nextFactory.ReceivePart(part.tPartModel);
         }
         else
         {
             GameManager.Instance.AddMoney(part.tPartModel.Price);
             GameManager.Instance.AddExperience(part.tPartModel.Level + 1);
-            PartPool.Instance.ReturnPart(part);
         }
+        PartPool.Instance.ReturnPart(part);
     }
 
     public void SetNextFactory(FactoryController nextFactory) => _nextFactory = nextFactory;

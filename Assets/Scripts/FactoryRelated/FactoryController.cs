@@ -32,7 +32,7 @@ public class FactoryController : MonoBehaviour
     [SerializeField] private FactoryVisualsController _factoryVisualsController;
 
     private FactoryState _currentState = FactoryState.ReadyToBuild;
-    private readonly List<Part> _holdingParts = new();
+    private readonly List<PartModel> _holdingParts = new();
     private int _currentConveyorIndex = 0;
     private Coroutine _currentSendPartsToConveyorsCoroutine;
     
@@ -110,7 +110,7 @@ public class FactoryController : MonoBehaviour
         else Debug.Log("Not enough currency to build the factory.");
     }
 
-    public void ReceivePart(Part part) => _holdingParts.Add(part);
+    public void ReceivePart(PartModel part) => _holdingParts.Add(part);
 
     private void OnGameTick()
     {
@@ -121,26 +121,23 @@ public class FactoryController : MonoBehaviour
         if (_holdingParts.Count - _conveyorControllers.Count + 1 >= 2) MergePartsInFactory();
         if (_holdingParts.Count > 0 && _currentSendPartsToConveyorsCoroutine == null) _currentSendPartsToConveyorsCoroutine = StartCoroutine(SendPartsToConveyors());
     }
-    
+
     private void ProducePart()
     {
         PartModel newPartModel = _partsDatabase.GetPartByLevel(_factoryProductionLevel);
-        if (newPartModel != null)
+        for (int i = 0; i < _factoryProductionAmount; i++) //_conveyorControllers.Count - (_conveyorControllers.Count - _factoryProductionAmount); i++)
         {
-            for (int i = 0; i < _factoryProductionAmount; i++)//_conveyorControllers.Count - (_conveyorControllers.Count - _factoryProductionAmount); i++)
-            {
-                _holdingParts.Add(PartPool.Instance.GetPart(newPartModel.Level));
-            }
+            _holdingParts.Add(newPartModel);
         }
     }
 
     private IEnumerator SendPartsToConveyors()
     {
-        List<Part> tempPartsArray = new List<Part>(_holdingParts);
+        List<PartModel> tempPartsArray = new List<PartModel>(_holdingParts);
         _holdingParts.Clear();
         foreach (var part in tempPartsArray)
         {
-            _conveyorControllers[_currentConveyorIndex].ReceivePart(part);
+            _conveyorControllers[_currentConveyorIndex].ReceivePart(PartPool.Instance.GetPart(part.Level));
             if (_currentConveyorIndex == _conveyorControllers.Count - 1 || _factoryProductionAmount < _conveyorControllers.Count) yield return new WaitForSeconds(0.1f);
             _currentConveyorIndex = _currentConveyorIndex >= _conveyorControllers.Count - 1 ? 0 : _currentConveyorIndex + 1;
         }
@@ -149,21 +146,18 @@ public class FactoryController : MonoBehaviour
 
     private void MergePartsInFactory()
     {
-        _holdingParts.Sort((a, b) => a.tPartModel.Level.CompareTo(b.tPartModel.Level));
+        _holdingParts.Sort((a, b) => a.Level.CompareTo(b.Level));
 
         for (int i = 0; i < _holdingParts.Count - 1; i++)
         {
-            if (_holdingParts[i].tPartModel.Level == _holdingParts[i + 1].tPartModel.Level && _holdingParts[i].tPartModel.Level < _factoryMergeLevel)
+            if (_holdingParts[i].Level == _holdingParts[i + 1].Level && _holdingParts[i].Level < _factoryMergeLevel)
             {
-                int newLevel = _holdingParts[i].tPartModel.Level + 1;
+                int newLevel = _holdingParts[i].Level + 1;
 
                 PartModel newPartModel = _partsDatabase.GetPartByLevel(newLevel);
                 if (newPartModel != null)
                 {
-                    PartPool.Instance.ReturnPart(_holdingParts[i]);
-                    PartPool.Instance.ReturnPart(_holdingParts[i + 1]);
-
-                    _holdingParts.Add(PartPool.Instance.GetPart(newPartModel.Level));
+                    _holdingParts.Add(newPartModel);
 
                     _holdingParts.RemoveAt(i + 1);
                     _holdingParts.RemoveAt(i);
